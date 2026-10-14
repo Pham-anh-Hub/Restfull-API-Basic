@@ -13,7 +13,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 # 1 câu lệnh sau dòng này sẽ thực hiện trong thư mục /app
 
-COPY target/*.jar app.jar
+COPY build/libs/*.jar app.jar
 #Copy file .jar đã build (nếu dùng Maven thì ở thư mục target/, nếu Gradle thì ở build/libs/)
 # và đổi tên thành app.jar cho ngắn gọn, dễ quản lý.
 
