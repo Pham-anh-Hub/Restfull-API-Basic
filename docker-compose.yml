@@ -33,6 +33,7 @@ services:
 
   backend:
     # TODO 5: Khai báo image backend hoặc cấu hình build
+    image: userfortest/backend-app
     container_name: backend-container
 
     ports:
