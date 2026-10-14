@@ -7,7 +7,7 @@
   #→ 4. Mở cổng nào? (EXPOSE)
   #→
   #→ 5. Chạy bằng lệnh gì? (ENTRYPOINT)
-FROM eclipse-termurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine
 # Vì dự án sử dụng java 17
 
 WORKDIR /app
