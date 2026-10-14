@@ -1,4 +1,4 @@
-
+version: '3.8'
 services:
   mysqldb:
     # TODO 1: Chọn image MySQL phù hợp
@@ -8,7 +8,7 @@ services:
 
     environment:
       # TODO 2: Điền thông tin database và tài khoản
-      MYSQL_DATABASE: devops_database
+      MYSQL_DATABASE: devops_db
       MYSQL_ROOT_PASSWORD: 123456789
       MYSQL_USER: devops_user
       MYSQL_PASSWORD: 123456789
@@ -42,7 +42,7 @@ services:
 
     environment:
       # TODO 7: Cấu hình kết nối Spring Boot tới MySQL (với tên db-service thay vì localhost)
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/devops_db?createDatabaseIfNotExit=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/devops_db?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: devops_user
       SPRING_DATASOURCE_PASSWORD: 123456789
 
