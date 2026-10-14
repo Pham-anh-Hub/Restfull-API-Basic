@@ -1,0 +1,71 @@
+Docker file:
+
+# TODO 1: Chọn image nền phù hợp với Java của dự án
+FROM 
+
+# TODO 2: Khai báo thư mục làm việc
+WORKDIR 
+
+# TODO 3: Sao chép file JAR đã build vào image
+COPY 
+
+# TODO 4: Khai báo cổng ứng dụng
+EXPOSE 
+
+# TODO 5: Khởi chạy ứng dụng Spring Boot
+ENTRYPOINT
+
+Docker-compose.yml
+
+services:
+  mysql-db:
+    # TODO 1: Chọn image MySQL phù hợp
+    image: 
+
+    container_name: 
+
+    environment:
+      # TODO 2: Điền thông tin database và tài khoản
+      MYSQL_DATABASE: 
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_USER: 
+      MYSQL_PASSWORD: 
+
+    ports:
+      # TODO 3: Khai báo ánh xạ cổng MySQL
+      - 
+
+    volumes:
+      # TODO 4: Khai báo volume lưu dữ liệu
+      - 
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+      interval: 5s
+
+  backend:
+    # TODO 5: Khai báo image backend hoặc cấu hình build
+    build:
+      context: 
+      dockerfile: 
+
+    container_name: 
+
+    ports:
+      # TODO 6: Ánh xạ cổng ứng dụng
+      - 
+
+    environment:
+      # TODO 7: Cấu hình kết nối Spring Boot tới MySQL
+      SPRING_DATASOURCE_URL: 
+      SPRING_DATASOURCE_USERNAME: 
+      SPRING_DATASOURCE_PASSWORD: 
+
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+    restart: unless-stopped
+
