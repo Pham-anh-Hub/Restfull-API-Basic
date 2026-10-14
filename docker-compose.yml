@@ -55,7 +55,7 @@ services:
 
 # Tài nguyên dùng chung
 volumes:
-  mysqldb:
+  db_data:
 networks:
   exam-network:
 
