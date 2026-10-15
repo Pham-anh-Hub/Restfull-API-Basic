@@ -23,10 +23,10 @@ jobs:
 
 #       Build ứng dụng Spring Boot
       - name: Execute permission for gradlew
-        uses: chmod +x gradlew
+        run: chmod +x gradlew
 
       - name: Build Spring Boot
-        uses: ./gradlew bootJar -x test
+        run: ./gradlew bootJar -x test
 
 
 #      Đăng nhập DockerHub, Build và Púsh Docker Image
