@@ -33,3 +33,43 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 #  Tat swap hien tai
 # sudo swapoff /swapfile
+
+
+
+
+# Các chỉ thị cơ bản trong Single-stage Dockerfile
+ #Chỉ thị
+ #
+ #Ý nghĩa & Vai trò
+ #
+ #FROM
+ #
+ #Khai báo Base Image ban đầu (vd: amazoncorretto:17-alpine, ubuntu:24.04). Mọi Dockerfile đều phải bắt đầu bằng FROM.
+ #
+ #WORKDIR
+ #
+ #Thiết lập thư mục làm việc mặc định bên trong container cho các lệnh tiếp theo (COPY, RUN, CMD).
+ #
+ #COPY
+ #
+ #Sao chép tệp/thư mục cục bộ từ máy host vào bên trong image filesystem (vd: COPY build/libs/*.jar app.jar).
+ #
+ #ADD
+ #
+ #Giống COPY nhưng hỗ trợ thêm tính năng tự động giải nén tệp .tar.gz hoặc tải tệp từ URL (khuyên dùng COPY mặc định).
+ #
+ #RUN
+ #
+ #Thực thi lệnh trong quá trình build image để cài đặt packages, thư viện (vd: RUN ./gradlew dependencies).
+ #
+ #ENV
+ #
+ #Khai báo các biến môi trường và thông số cấu hình (vd: ENV JAVA_OPTS="-Xms256m -Xmx512m").
+ #
+ #EXPOSE
+ #
+ #Khai báo cổng (port) mạng mà container dự định lắng nghe (Spring Boot mặc định port 8080).
+ #
+ #CMD
+ #
+ #Lệnh mặc định được thực thi khi container khởi chạy (chỉ có 1 lệnh CMD cuối cùng có hiệu lực).
