@@ -11,4 +11,5 @@ public interface EmployeeService {
     Employee updateEmployee(Long empId, Employee employee);
     boolean deleteEmployee(Long empId);
     List<Employee> getEmployeesByName(String empName);
+    public Long countEmployees();
 }

@@ -26,6 +26,18 @@ public class EmployeeController {
         ), HttpStatus.OK);
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<ApiDataResponse<Long>> countEmployees(){
+        return new ResponseEntity<>(
+                new ApiDataResponse<>(
+                        true,
+                        "Tổng số lượng nhân viên thống kê được là: " + employeeService.countEmployees(),
+                        employeeService.countEmployees(),
+                        HttpStatus.OK
+                ), HttpStatus.OK
+        );
+    }
+
     @PostMapping
     public ResponseEntity<ApiDataResponse<Employee>> insertEmployee(@RequestBody Employee employee) {
         return new ResponseEntity<>(new ApiDataResponse<>(

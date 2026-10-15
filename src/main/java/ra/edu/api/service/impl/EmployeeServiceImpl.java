@@ -24,6 +24,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee getEmployeeById(Long empId) {
         return employeeResporitory.findById(empId).orElseThrow(() -> new NoSuchElementException("Không tìm thấy nhân viên có id " + empId));
     }
+    @Override
+    public Long countEmployees(){
+        return employeeResporitory.count();
+    }
 
     @Override
     public Employee insertEmployee(Employee employee) {
