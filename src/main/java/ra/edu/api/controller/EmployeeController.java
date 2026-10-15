@@ -18,12 +18,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<ApiDataResponse<List<Employee>>> getEmployees() {
-        return new ResponseEntity<>(new ApiDataResponse<>(
-                true,
-                "Lấy danh sách nhân viên thành công!",
-                employeeService.getEmployees(),
-                HttpStatus.OK
-        ), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiDataResponse<>(), HttpStatus.OK);
     }
 
     @PostMapping
