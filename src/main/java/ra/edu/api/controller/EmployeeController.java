@@ -30,7 +30,7 @@ public class EmployeeController {
     public ResponseEntity<ApiDataResponse<Employee>> insertEmployee(@RequestBody Employee employee) {
         return new ResponseEntity<>(new ApiDataResponse<>(
                 true,
-                "Thêm mới nhân viên thành công!",
+                "Thêm mới nhân viên thành công (edit for test merge)!",
                 employeeService.insertEmployee(employee),
                 HttpStatus.CREATED
         ), HttpStatus.CREATED);
