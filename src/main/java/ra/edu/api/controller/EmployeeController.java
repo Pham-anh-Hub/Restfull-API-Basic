@@ -20,7 +20,7 @@ public class EmployeeController {
     public ResponseEntity<ApiDataResponse<List<Employee>>> getEmployees() {
         return new ResponseEntity<>(new ApiDataResponse<>(
                 true,
-                "Lấy danh sách nhân viên thành công!",
+                "Lấy danh sách nhân viên thành công! (edit for test merge)",
                 employeeService.getEmployees(),
                 HttpStatus.OK
         ), HttpStatus.OK);
