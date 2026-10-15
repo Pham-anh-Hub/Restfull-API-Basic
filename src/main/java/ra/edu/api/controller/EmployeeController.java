@@ -28,6 +28,11 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<ApiDataResponse<Employee>> insertEmployee(@RequestBody Employee employee) {
-        return new ResponseEntity<>(new ApiDataResponse<>(), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiDataResponse<>(
+                true,
+                "Thêm mới nhân viên thành công (edit for test merge)!",
+                employeeService.insertEmployee(employee),
+                HttpStatus.CREATED
+        ), HttpStatus.CREATED);
     }
 }
