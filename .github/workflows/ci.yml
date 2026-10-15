@@ -50,7 +50,7 @@ jobs:
         with:
           host: ${{secrets.VPS_HOST}}
           username: ${{secrets.VPS_USER}}
-          password: ${{secrets.VPS_KEY}}
+          password: ${{secrets.VPS_SSH_KEY}}
         # có thể dùng mật khẩu thay thế và khai báo
           # password: ${{secrets.VPS_PASSWORD}}
           script: |
