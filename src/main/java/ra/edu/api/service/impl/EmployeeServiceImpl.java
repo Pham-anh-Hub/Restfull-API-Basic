@@ -22,7 +22,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee getEmployeeById(Long empId) {
-        return employeeResporitory.findById(empId).orElseThrow();
+        return employeeResporitory.findById(empId).orElseThrow(() -> new NoSuchElementException("Không tìm thấy nhân viên có id " + empId));
     }
 
     @Override
