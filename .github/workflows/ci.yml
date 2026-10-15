@@ -1,0 +1,220 @@
+name: CI Pineline
+
+# Tự động chạy khi có push lên nhánh main
+on:
+  push:
+    branches: ["main"]
+
+# Checkout source code và thiết lập JDK phù hợp.
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+#      Checkout source code và thiết lập JDK phù hợp.
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+#       Build ứng dụng Spring Boot
+      - name: Execute permission for gradlew
+        uses: chmod +x gradlew
+
+      - name: Build Spring Boot
+        uses: ./gradlew bootJar -x test
+
+
+#      Đăng nhập DockerHub, Build và Púsh Docker Image
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+
+      - name: Build and Push Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/backend-app:latest
+
+
+#       Kết nối tới VPS và triển kkhai bằng Docker Compose
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.VPS_HOST}}
+          username: ${{secrets.VPS_USER}}
+          password: ${{secrets.VPS_KEY}}
+        # có thể dùng mật khẩu thay thế và khai báo
+          # password: ${{secrets.VPS_PASSWORD}}
+          script: |
+            cd ~/Restfull-API-Basic
+            # 1. Kéo image mới nhất vừa build về VPS
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/backend-app:latest
+            # 2. Khởi động lại backend với image mới
+            docker compose up -d --no-deps backend
+            # 3. Dọn dẹp các image cũ không còn dùng
+            docker image prune -f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Quy trình CI/CD qua câu chuyện logic sau:
+#
+#  [Máy của GitHub]
+#  Push code lên main
+#  -> Cài Java 17
+#  -> Dùng Gradle build ra file .jar
+#  -> Đóng gói Docker Image
+#  -> Bắn (Push) image lên Docker Hub
+#  │
+#  ▼ (SSH qua mạng Internet)
+#  [Máy chủ VPS của bạn]
+#  Nhận lệnh SSH
+#  -> Kéo (Pull) image mới nhất từ Docker Hub về
+#  -> docker compose up -d (Chạy phiên bản mới)
+#  2. Chuẩn bị GitHub Secrets (Bắt buộc theo đề bài)
+#
+#Đề bài yêu cầu: Các thông tin nhạy cảm không được ghi vào code mà phải đưa vào GitHub Secrets.
+#
+#Bạn vào GitHub: Repository của bạn
+#  →
+#  → Settings
+#  →
+#  → Secrets and variables
+#  →
+#  → Actions
+#  →
+#→ Bấm nút xanh New repository secret để tạo 4 biến sau:
+#
+#  Tên Secret	Ý nghĩa	Giá trị điền vào
+#DOCKERHUB_USERNAME	Tên tài khoản Docker Hub của bạn	Ví dụ: nguyenvana
+#DOCKERHUB_TOKEN	Token / Mật khẩu Docker Hub	Vào Docker Hub: Account Settings
+#  →
+#  → Security
+#  →
+#  → New Access Token (hoặc lấy chính mật khẩu Docker Hub)
+#VPS_HOST	Địa chỉ IP Public của VPS	Ví dụ: 54.214.x.x (IP thật của VPS)
+#  VPS_USER	Tên tài khoản trên VPS	devops_student (hoặc userfortest)
+#  VPS_SSH_KEY	Khóa bí mật Private Key để SSH	Toàn bộ nội dung file .pem hoặc file id_rsa (mở bằng Notepad copy từ -----BEGIN ... đến -----END ...)
+#
+#  (Nếu bạn đăng nhập VPS bằng mật khẩu thường thay vì Key, có thể tạo secret VPS_PASSWORD thay cho VPS_SSH_KEY).
+#
+#3. Tạo file Workflow: .github/workflows/deploy.yml
+#
+#Tạo file mới theo đường dẫn: .github/workflows/deploy.yml trong mã nguồn dự án của bạn và dán nội dung chuẩn dưới đây:
+#
+#  yaml
+#name: CI/CD Pipeline
+## Yêu cầu 1: Tự động chạy khi có push lên nhánh main
+#on:
+#  push:
+#    branches: [ "main" ]
+#jobs:
+#  build-and-deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      # Yêu cầu 2: Checkout code & cài đặt JDK 17
+#      - name: Checkout source code
+#        uses: actions/checkout@v4
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#      # Yêu cầu 3: Build ứng dụng Spring Boot bằng Gradle
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x gradlew
+#      - name: Build with Gradle
+#        run: ./gradlew bootJar -x test
+#      # Yêu cầu 4: Đăng nhập Docker Hub, Build và Push Docker Image
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v5
+#        with:
+#          context: .
+#          push: true
+#          # Đặt tên image theo tài khoản Docker Hub
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-app:latest
+#      # Yêu cầu 5: Kết nối tới VPS và triển khai bằng Docker Compose
+#      - name: Deploy to VPS via SSH
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.VPS_HOST }}
+#          username: ${{ secrets.VPS_USER }}
+#          key: ${{ secrets.VPS_SSH_KEY }}
+#          # Nếu dùng mật khẩu thì thay dòng 'key' ở trên bằng: password: ${{ secrets.VPS_PASSWORD }}
+#          script: |
+#            cd ~/Restfull-API-Basic
+#            # 1. Kéo image mới nhất vừa build về VPS
+#            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/backend-app:latest
+#            # 2. Khởi động lại backend với image mới
+#            docker compose up -d --no-deps backend
+#            # 3. Dọn dẹp các image cũ không còn dùng
+#            docker image prune -f
+#  4. Điều chỉnh nhỏ trong docker-compose.yml trên VPS (Để nhận image từ Docker Hub)
+#
+#Vì CI/CD đã build và đẩy image lên Docker Hub với tên ${{ secrets.DOCKERHUB_USERNAME }}/backend-app:latest, nên trong file docker-compose.yml trên VPS, mục backend bạn khai báo image trỏ tới Docker Hub của bạn:
+#
+#  yaml
+#backend:
+#  image: <tên_tai_khoan_dockerhub_cua_ban>/backend-app:latest
+#  container_name: backend-container
+#  ports:
+#    - "8080:8080"
+#  environment:
+#    SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/devops_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#    SPRING_DATASOURCE_USERNAME: devops_user
+#    SPRING_DATASOURCE_PASSWORD: "123456789"
+#  depends_on:
+#    mysqldb:
+#      condition: service_healthy
+#  networks:
+#    - exam-network
+#  restart: unless-stopped
+#  5. Cách test và lấy minh chứng chấm điểm
+#Commit và Push code lên main:
+#  bash
+#  git add .
+#git commit -m "ci: add github actions pipeline"
+#  git push origin main
+#Kiểm tra trên GitHub:
+#  Bấm vào tab Actions trên GitHub repository.
+#Bạn sẽ thấy pipeline đang chạy: từ màu vàng chuyển sang tích xanh lá cây (✔) ở tất cả các bước.
+#Kiểm tra trên VPS:
+#Gõ docker ps: Bạn sẽ thấy container backend-container có cột CREATED vừa được tạo cách đó vài chục giây.
+#Thử gọi API: curl http://localhost:8080/api/employees/count trả về kết quả thành công.
